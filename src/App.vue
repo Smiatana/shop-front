@@ -1,58 +1,63 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { ref } from 'vue'
+import MainHeader from '@/components/MainHeader.vue'
+import MainFooter from '@/components/MainFooter.vue'
+
+const theme = ref(localStorage.getItem('theme') || 'light')
+
+function toggleTheme() {
+  theme.value = theme.value === 'light' ? 'dark' : 'light'
+  localStorage.setItem('theme', theme.value)
+}
+</script>
 
 <template>
-  <div id="app">
-    <header>
-      <nav>
-        <router-link to="/">Home</router-link>
-        <router-link to="/products">Products</router-link>
-        <router-link to="/cart">Cart</router-link>
-        <router-link to="/orders">Orders</router-link>
-        <router-link to="/comparisons">Comparisons</router-link>
-        <router-link to="/admin">Admin Panel</router-link>
-      </nav>
-    </header>
+  <div :class="['app', theme]">
+    <MainHeader :theme="theme" @toggle-theme="toggleTheme" />
 
     <main>
       <router-view />
     </main>
 
-    <footer>
-      <p>footer</p>
-    </footer>
+    <MainFooter />
   </div>
 </template>
 
-<style scoped>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  margin: 0;
-  padding: 0;
-}
-
+<style>
 body {
   margin: 0;
-  padding: 0;
+}
+.app.light {
+  --bg: #ffffff;
+  --text: #111111;
+  --subtext: #444444;
+  --card-bg: #f5f5f5;
+  --accent: #00c853;
+  --accent-dark: #009624;
 }
 
-header nav {
-  display: flex;
-  gap: 1rem;
-  background: #333;
-  padding: 1rem;
+.app.dark {
+  --bg: #0d0d0d;
+  --text: #f0f0f0;
+  --subtext: #bbbbbb;
+  --card-bg: #1a1a1a;
+  --accent: #00e676;
+  --accent-dark: #00c853;
 }
 
-header nav a {
-  color: white;
-  text-decoration: none;
-}
-
-header nav a.router-link-active {
-  font-weight: bold;
-  text-decoration: underline;
-}
-
-main {
-  padding: 1rem;
+.app {
+  font-family:
+    'Montserrat',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  transition:
+    background 0.3s,
+    color 0.3s;
 }
 </style>
