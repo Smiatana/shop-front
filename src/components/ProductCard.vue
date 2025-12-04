@@ -1,16 +1,30 @@
 <script setup lang="ts">
+import { useAuthStore } from '@/stores/auth'
+
 defineProps<{
   name: string
   price: number
   image?: string
 }>()
+
+const auth = useAuthStore()
 </script>
 
 <template>
-  <div class="product-card">
-    <div class="product-img" :style="{ backgroundImage: image ? `url(${image})` : '' }"></div>
-    <h3>{{ name }}</h3>
-    <p>${{ price }}</p>
+  <div class="actions">
+    <template v-if="auth.isAdmin">
+      <button class="edit">Edit</button>
+      <button class="delete">Delete</button>
+    </template>
+
+    <template v-else-if="auth.isAuthenticated">
+      <button class="add-cart">Add to Cart</button>
+      <button class="add-compare">Compare</button>
+    </template>
+
+    <template v-else>
+      <router-link to="/login" class="login-required">Log in to buy</router-link>
+    </template>
   </div>
 </template>
 

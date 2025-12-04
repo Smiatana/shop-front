@@ -2,6 +2,9 @@
 import { ref } from 'vue'
 import { Icon } from '@iconify/vue'
 import LogoLink from '@/components/LogoLink.vue'
+import { useAuthStore } from '@/stores/auth'
+
+const auth = useAuthStore()
 
 defineProps<{ theme: string }>()
 defineEmits(['toggle-theme'])
@@ -24,7 +27,24 @@ const mobileOpen = ref(false)
         <router-link to="/products">Products</router-link>
         <router-link to="/categories">Categories</router-link>
         <router-link to="/deals">Deals</router-link>
-        <router-link to="/login">Log In</router-link>
+
+        <!-- admin -->
+        <template v-if="auth.isAdmin">
+          <router-link to="/admin">Admin Panel</router-link>
+        </template>
+
+        <!-- logged in user -->
+        <template v-else-if="auth.isAuthenticated">
+          <router-link to="/cart">Cart</router-link>
+          <router-link to="/comparisons">Comparisons</router-link>
+          <router-link to="/orders">Orders</router-link>
+          <router-link to="/profile">Profile</router-link>
+        </template>
+
+        <!-- guest -->
+        <template v-else>
+          <router-link to="/signin">Sign In</router-link>
+        </template>
       </nav>
 
       <button class="theme-btn" @click="$emit('toggle-theme')">
@@ -42,7 +62,24 @@ const mobileOpen = ref(false)
         <router-link @click="mobileOpen = false" to="/products">Products</router-link>
         <router-link @click="mobileOpen = false" to="/categories">Categories</router-link>
         <router-link @click="mobileOpen = false" to="/deals">Deals</router-link>
-        <router-link @click="mobileOpen = false" to="/login">Log In</router-link>
+
+        <!-- admin -->
+        <template v-if="auth.isAdmin">
+          <router-link @click="mobileOpen = false" to="/admin">Admin Panel</router-link>
+        </template>
+
+        <!-- logged in user -->
+        <template v-else-if="auth.isAuthenticated">
+          <router-link @click="mobileOpen = false" to="/cart">Cart</router-link>
+          <router-link @click="mobileOpen = false" to="/comparisons">Comparisons</router-link>
+          <router-link @click="mobileOpen = false" to="/orders">Orders</router-link>
+          <router-link @click="mobileOpen = false" to="/profile">Profile</router-link>
+        </template>
+
+        <!-- guest -->
+        <template v-else>
+          <router-link @click="mobileOpen = false" to="/signin">Sign In</router-link>
+        </template>
       </nav>
     </transition>
   </header>

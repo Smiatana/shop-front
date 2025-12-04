@@ -1,8 +1,12 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
-
+import { useAuthStore } from '@/stores/auth'
 import HomePage from '@/pages/HomePage.vue'
+import SignInPage from '@/pages/SignInPage.vue'
 
-const routes: RouteRecordRaw[] = [{ path: '/', name: 'home', component: HomePage }]
+const routes: RouteRecordRaw[] = [
+  { path: '/', name: 'home', component: HomePage },
+  { path: '/signin', name: 'signin', component: SignInPage },
+]
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -10,16 +14,16 @@ const router = createRouter({
 })
 
 router.beforeEach((to, _, next) => {
-  const isAuthenticated = !!localStorage.getItem('token')
-  const role = localStorage.getItem('role')
+  const auth = useAuthStore()
 
-  if (to.meta.requiresAdmin && role !== 'Admin') {
-    return next('/login')
+  if (to.meta.requiresAdmin && !auth.isAdmin) {
+    return next('/signin')
   }
 
-  if (to.meta.requiresAuth && !isAuthenticated) {
-    return next('/login')
+  if (to.meta.requiresAuth && !auth.isAuthenticated) {
+    return next('/signin')
   }
+
   next()
 })
 
