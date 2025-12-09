@@ -25,8 +25,6 @@ const mobileOpen = ref(false)
     <div class="right">
       <nav class="nav desktop-nav">
         <router-link to="/products">Products</router-link>
-        <router-link to="/categories">Categories</router-link>
-        <router-link to="/deals">Deals</router-link>
 
         <!-- admin -->
         <template v-if="auth.isAdmin">
@@ -60,8 +58,6 @@ const mobileOpen = ref(false)
     <transition name="slide">
       <nav v-if="mobileOpen" class="mobile-nav">
         <router-link @click="mobileOpen = false" to="/products">Products</router-link>
-        <router-link @click="mobileOpen = false" to="/categories">Categories</router-link>
-        <router-link @click="mobileOpen = false" to="/deals">Deals</router-link>
 
         <!-- admin -->
         <template v-if="auth.isAdmin">

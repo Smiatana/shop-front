@@ -2,10 +2,17 @@ import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import HomePage from '@/pages/HomePage.vue'
 import SignInPage from '@/pages/SignInPage.vue'
+import UserProfilePage from '@/pages/UserProfilePage.vue'
 
 const routes: RouteRecordRaw[] = [
   { path: '/', name: 'home', component: HomePage },
   { path: '/signin', name: 'signin', component: SignInPage },
+  {
+    path: '/profile',
+    name: 'profile',
+    component: UserProfilePage,
+    meta: { requiresAuth: true },
+  },
 ]
 
 const router = createRouter({
