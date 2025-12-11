@@ -10,8 +10,6 @@ const categories = ref<Category[]>([])
 const expandedCategoryIds = ref<number[]>([])
 const searchQuery = ref('')
 
-const API_URL = import.meta.env.VITE_API_URL as string
-
 async function loadCategories() {
   const res = await authFetch('/api/categories')
   if (!res.ok) return

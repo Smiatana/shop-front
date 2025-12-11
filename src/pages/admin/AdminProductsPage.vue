@@ -3,6 +3,7 @@ import { ref, onMounted } from 'vue'
 import type { Product } from '@/types/product'
 import type { Category } from '@/types/category'
 import { authFetch } from '@/utils/authFetch'
+import { imageUrl } from '@/utils/imageUrl'
 
 const products = ref<Product[]>([])
 const categories = ref<Category[]>([])
@@ -13,6 +14,11 @@ async function loadCategories() {
   const res = await authFetch('/api/categories')
   if (!res.ok) return
   categories.value = await res.json()
+}
+
+async function loadAllProducts() {
+  const res = await authFetch('/api/products')
+  products.value = await res.json()
 }
 
 async function search() {
@@ -29,9 +35,22 @@ async function search() {
   products.value = await res.json()
 }
 
+async function deleteProduct(id: number) {
+  if (!confirm('Delete this product?')) return
+
+  const res = await authFetch(`/api/products/${id}`, {
+    method: 'DELETE',
+  })
+
+  if (!res.ok) return
+
+  await search()
+}
+
 onMounted(async () => {
   await loadCategories()
   await search()
+  await loadAllProducts()
 })
 </script>
 
@@ -60,20 +79,37 @@ onMounted(async () => {
     <table class="table">
       <thead>
         <tr>
+          <th>Image</th>
           <th>Name</th>
           <th>Brand</th>
           <th>Price</th>
           <th>Stock</th>
           <th>Category</th>
+          <th>Actions</th>
         </tr>
       </thead>
+
       <tbody>
         <tr v-for="p in products" :key="p.id">
+          <td class="image-cell">
+            <img v-if="p.images?.length" :src="imageUrl(p.images[0].url)" class="thumb" />
+
+            <div v-else class="thumb placeholder">No image</div>
+          </td>
+
           <td>{{ p.name }}</td>
           <td>{{ p.brand }}</td>
           <td>{{ p.price }} BYN</td>
           <td>{{ p.stockQuantity }}</td>
           <td>{{ p.categoryId }}</td>
+
+          <td class="actions">
+            <button class="edit-btn" @click="$router.push(`/admin/products/${p.id}/edit`)">
+              Edit
+            </button>
+
+            <button class="delete-btn" @click="deleteProduct(p.id)">Delete</button>
+          </td>
         </tr>
       </tbody>
     </table>
@@ -179,5 +215,48 @@ onMounted(async () => {
 
 .table td {
   color: var(--text);
+}
+
+.image-cell {
+  width: 60px;
+}
+
+.thumb {
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
+  border-radius: 4px;
+  background: #222;
+}
+
+.thumb.placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  color: #777;
+}
+
+.actions {
+  display: flex;
+  gap: 6px;
+}
+
+.edit-btn {
+  padding: 6px 10px;
+  border-radius: 4px;
+  border: none;
+  background: #3b82f6;
+  color: #fff;
+  cursor: pointer;
+}
+
+.delete-btn {
+  padding: 6px 10px;
+  border-radius: 4px;
+  border: none;
+  background: #b91c1c;
+  color: #fff;
+  cursor: pointer;
 }
 </style>

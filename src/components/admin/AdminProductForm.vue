@@ -46,6 +46,8 @@ function removeSpecRow(index: number) {
 }
 
 function buildSpecsJson() {
+  const obj: Record<string, unknown> = {}
+
   for (const row of form.specs) {
     const key = row.key.trim()
     const value = row.value.trim()
@@ -55,6 +57,7 @@ function buildSpecsJson() {
     if (!key || !value) {
       throw new Error('Each spec row must have both key and value.')
     }
+
     const num = Number(value)
     obj[key] = isNaN(num) ? value : num
   }
