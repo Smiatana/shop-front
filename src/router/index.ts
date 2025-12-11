@@ -3,6 +3,9 @@ import { useAuthStore } from '@/stores/auth'
 import HomePage from '@/pages/HomePage.vue'
 import SignInPage from '@/pages/SignInPage.vue'
 import UserProfilePage from '@/pages/UserProfilePage.vue'
+import AdminLayout from '@/pages/admin/AdminLayout.vue'
+import AdminCategoriesPage from '@/pages/admin/AdminCategoriesPage.vue'
+import AdminProductsPage from '@/pages/admin/AdminProductsPage.vue'
 
 const routes: RouteRecordRaw[] = [
   { path: '/', name: 'home', component: HomePage },
@@ -12,6 +15,15 @@ const routes: RouteRecordRaw[] = [
     name: 'profile',
     component: UserProfilePage,
     meta: { requiresAuth: true },
+  },
+  {
+    path: '/admin',
+    component: AdminLayout,
+    meta: { requiresAdmin: true },
+    children: [
+      { path: 'categories', component: AdminCategoriesPage },
+      { path: 'products', component: AdminProductsPage },
+    ],
   },
 ]
 
