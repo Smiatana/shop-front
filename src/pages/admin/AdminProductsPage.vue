@@ -3,7 +3,7 @@ import { ref, onMounted } from 'vue'
 import type { Product } from '@/types/product'
 import type { Category } from '@/types/category'
 import { authFetch } from '@/utils/authFetch'
-import { imageUrl } from '@/utils/imageUrl'
+import AdminProductCard from '@/components/admin/AdminProductCard.vue'
 
 const products = ref<Product[]>([])
 const categories = ref<Category[]>([])
@@ -12,17 +12,17 @@ const selectedCategoryId = ref<number | null>(null)
 
 async function loadCategories() {
   const res = await authFetch('/api/categories')
-  if (!res.ok) return
-  categories.value = await res.json()
+  if (res.ok) categories.value = await res.json()
 }
 
 async function loadAllProducts() {
   const res = await authFetch('/api/products')
-  products.value = await res.json()
+  if (res.ok) products.value = await res.json()
 }
 
 async function search() {
   const params = new URLSearchParams()
+
   if (searchQuery.value.trim()) {
     params.append('query', searchQuery.value.trim())
   }
@@ -32,24 +32,16 @@ async function search() {
 
   const res = await authFetch(`/api/products/search?${params.toString()}`)
   if (!res.ok) return
+
   products.value = await res.json()
 }
 
-async function deleteProduct(id: number) {
-  if (!confirm('Delete this product?')) return
-
-  const res = await authFetch(`/api/products/${id}`, {
-    method: 'DELETE',
-  })
-
-  if (!res.ok) return
-
+async function reloadAfterChange() {
   await search()
 }
 
 onMounted(async () => {
   await loadCategories()
-  await search()
   await loadAllProducts()
 })
 </script>
@@ -76,43 +68,17 @@ onMounted(async () => {
       <button class="search-btn" @click="search">Search</button>
     </div>
 
-    <table class="table">
-      <thead>
-        <tr>
-          <th>Image</th>
-          <th>Name</th>
-          <th>Brand</th>
-          <th>Price</th>
-          <th>Stock</th>
-          <th>Category</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-
-      <tbody>
-        <tr v-for="p in products" :key="p.id">
-          <td class="image-cell">
-            <img v-if="p.images?.length" :src="imageUrl(p.images[0].url)" class="thumb" />
-
-            <div v-else class="thumb placeholder">No image</div>
-          </td>
-
-          <td>{{ p.name }}</td>
-          <td>{{ p.brand }}</td>
-          <td>{{ p.price }} BYN</td>
-          <td>{{ p.stockQuantity }}</td>
-          <td>{{ p.categoryId }}</td>
-
-          <td class="actions">
-            <button class="edit-btn" @click="$router.push(`/admin/products/${p.id}/edit`)">
-              Edit
-            </button>
-
-            <button class="delete-btn" @click="deleteProduct(p.id)">Delete</button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <div class="list">
+      <AdminProductCard
+        v-for="p in products"
+        :key="p.id"
+        :product="p"
+        :categories="categories"
+        show-category-selector
+        @deleted="reloadAfterChange"
+        @moved="reloadAfterChange"
+      />
+    </div>
   </div>
 </template>
 
@@ -159,7 +125,6 @@ onMounted(async () => {
   background: color-mix(in srgb, var(--bg) 80%, var(--accent) 10%);
 }
 
-/* Search button */
 .search-btn {
   padding: 10px 16px;
   border-radius: 6px;
@@ -182,81 +147,9 @@ onMounted(async () => {
   transform: translateY(0);
 }
 
-.table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 14px;
-  background: var(--card-bg);
-  border-radius: 8px;
-  overflow: hidden;
-  border: 1px solid color-mix(in srgb, var(--text) 10%, transparent);
-}
-
-.table th,
-.table td {
-  padding: 12px 14px;
-  border-bottom: 1px solid color-mix(in srgb, var(--text) 10%, transparent);
-}
-
-.table th {
-  text-align: left;
-  font-weight: 600;
-  color: var(--subtext);
-  background: color-mix(in srgb, var(--card-bg) 90%, var(--text) 5%);
-}
-
-.table tr:nth-child(even) td {
-  background: color-mix(in srgb, var(--card-bg) 95%, var(--text) 3%);
-}
-
-.table tr:nth-child(odd) td {
-  background: color-mix(in srgb, var(--card-bg) 98%, var(--text) 2%);
-}
-
-.table td {
-  color: var(--text);
-}
-
-.image-cell {
-  width: 60px;
-}
-
-.thumb {
-  width: 48px;
-  height: 48px;
-  object-fit: cover;
-  border-radius: 4px;
-  background: #222;
-}
-
-.thumb.placeholder {
+.list {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 10px;
-  color: #777;
-}
-
-.actions {
-  display: flex;
-  gap: 6px;
-}
-
-.edit-btn {
-  padding: 6px 10px;
-  border-radius: 4px;
-  border: none;
-  background: #3b82f6;
-  color: #fff;
-  cursor: pointer;
-}
-
-.delete-btn {
-  padding: 6px 10px;
-  border-radius: 4px;
-  border: none;
-  background: #b91c1c;
-  color: #fff;
-  cursor: pointer;
+  flex-direction: column;
+  gap: 10px;
 }
 </style>

@@ -142,7 +142,6 @@ onMounted(() => {
   gap: 20px;
 }
 
-/* Header */
 .page-header {
   display: flex;
   justify-content: space-between;
@@ -228,8 +227,7 @@ onMounted(() => {
   max-width: 480px;
 }
 
-.form input[type='text'],
-.form input[type='file'],
+.form input,
 .form textarea {
   padding: 10px 12px;
   border-radius: 6px;
