@@ -18,6 +18,7 @@ function logout() {
 
       <RouterLink to="/admin/categories">Categories</RouterLink>
       <RouterLink to="/admin/products">Products</RouterLink>
+      <RouterLink to="/admin/parsing">Parsing</RouterLink>
 
       <button class="logout" @click="logout">Log out</button>
     </aside>
@@ -31,7 +32,6 @@ function logout() {
 <style scoped>
 .admin-layout {
   display: flex;
-  height: 100vh;
 }
 
 .sidebar {

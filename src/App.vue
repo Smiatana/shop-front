@@ -24,8 +24,16 @@ function toggleTheme() {
 </template>
 
 <style>
+html,
 body {
   margin: 0;
+  padding: 0;
+  min-height: 100%;
+}
+#app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 .app.light {
   --bg: #ffffff;
@@ -46,6 +54,11 @@ body {
 }
 
 .app {
+  display: flex;
+  flex-direction: column;
+  flex: 1 0 auto;
+  background: var(--bg);
+  color: var(--text);
   font-family:
     'Montserrat',
     -apple-system,
@@ -53,11 +66,18 @@ body {
     'Segoe UI',
     Roboto,
     sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  min-height: 100vh;
   transition:
     background 0.3s,
     color 0.3s;
+}
+main {
+  flex: 1 0 auto;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+footer {
+  flex-shrink: 0;
 }
 </style>

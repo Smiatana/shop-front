@@ -7,6 +7,7 @@ import AdminLayout from '@/pages/admin/AdminLayout.vue'
 import AdminCategoriesPage from '@/pages/admin/AdminCategoriesPage.vue'
 import AdminProductsPage from '@/pages/admin/AdminProductsPage.vue'
 import ProductEditPage from '@/pages/admin/ProductEditPage.vue'
+import AdminParser from '@/pages/admin/AdminParser.vue'
 
 const routes: RouteRecordRaw[] = [
   { path: '/', name: 'home', component: HomePage },
@@ -24,6 +25,7 @@ const routes: RouteRecordRaw[] = [
     children: [
       { path: 'categories', component: AdminCategoriesPage },
       { path: 'products', component: AdminProductsPage },
+      { path: 'parsing', component: AdminParser },
       {
         path: '/admin/products/:id/edit',
         component: ProductEditPage,

@@ -75,7 +75,7 @@ async function submit() {
   fd.append('StockQuantity', form.stockQuantity || '0')
 
   try {
-    fd.append('Specs', buildSpecsJson())
+    fd.append('Specs', new Blob([buildSpecsJson()], { type: 'application/json' }))
   } catch (err) {
     alert(err instanceof Error ? err.message : 'Invalid specs')
     return

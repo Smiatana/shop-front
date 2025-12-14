@@ -236,4 +236,13 @@ onMounted(loadCategories)
   border-radius: 6px;
   cursor: pointer;
 }
+
+.form input,
+select {
+  background-color: var(--bg);
+  color: var(--text);
+  border: 1px solid var(--subtext);
+  border-radius: 4px;
+  padding: 4px;
+}
 </style>
