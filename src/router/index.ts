@@ -8,6 +8,8 @@ import AdminCategoriesPage from '@/pages/admin/AdminCategoriesPage.vue'
 import AdminProductsPage from '@/pages/admin/AdminProductsPage.vue'
 import ProductEditPage from '@/pages/admin/ProductEditPage.vue'
 import AdminParser from '@/pages/admin/AdminParser.vue'
+import AdminDiscountsPage from '@/pages/admin/AdminDiscountsPage.vue'
+import DiscountCreatePage from '@/pages/admin/DiscountCreatePage.vue'
 
 const routes: RouteRecordRaw[] = [
   { path: '/', name: 'home', component: HomePage },
@@ -30,6 +32,8 @@ const routes: RouteRecordRaw[] = [
         path: '/admin/products/:id/edit',
         component: ProductEditPage,
       },
+      { path: 'discounts', component: AdminDiscountsPage },
+      { path: 'discounts/create', component: DiscountCreatePage },
     ],
   },
 ]

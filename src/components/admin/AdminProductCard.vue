@@ -75,6 +75,13 @@ async function moveProduct() {
         Edit
       </button>
 
+      <button
+        class="discount-btn"
+        @click="$router.push(`/admin/discounts/create?productId=${product.id}`)"
+      >
+        Add Discount
+      </button>
+
       <button class="delete-btn" @click="deleteProduct">Delete</button>
     </div>
   </div>
@@ -164,5 +171,14 @@ async function moveProduct() {
   border: none;
   color: #fff;
   border-radius: 4px;
+}
+
+.discount-btn {
+  padding: 6px 10px;
+  background: #f59e0b;
+  color: white;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
 }
 </style>
