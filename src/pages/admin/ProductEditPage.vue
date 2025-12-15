@@ -19,7 +19,7 @@ const form = reactive({
   brand: '',
   price: '',
   description: '',
-  stockQuantity: '',
+  stockQuantity: 0,
   categoryId: 0,
   specs: [] as { key: string; value: string }[],
   newImages: [] as File[],
@@ -54,7 +54,7 @@ function buildSpecsJson() {
     const value = row.value.trim()
 
     if (!key && !value) continue
-    if (!key || !value) throw new Error('Each spec row must have both key and value.')
+    if (!key) throw new Error('Each spec row must have a key.')
 
     const num = Number(value)
     obj[key] = isNaN(num) ? value : num
@@ -74,7 +74,8 @@ async function loadProduct() {
   form.brand = data.brand
   form.price = String(data.price)
   form.description = data.description
-  form.stockQuantity = String(data.stockQuantity)
+  form.stockQuantity = data.stockQuantity
+  form.categoryId = data.categoryId
 
   form.specs = Object.entries(data.specs).map(([key, value]) => ({
     key,
@@ -93,7 +94,7 @@ async function save() {
   fd.append('Brand', form.brand)
   fd.append('Price', form.price)
   fd.append('Description', form.description)
-  fd.append('StockQuantity', form.stockQuantity)
+  fd.append('StockQuantity', String(form.stockQuantity))
   fd.append('Specs', buildSpecsJson())
   fd.append('CategoryId', String(form.categoryId))
 

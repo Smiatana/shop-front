@@ -37,7 +37,11 @@ async function search() {
 }
 
 async function reloadAfterChange() {
-  await search()
+  if (searchQuery.value.trim() || selectedCategoryId.value) {
+    await search()
+  } else {
+    await loadAllProducts()
+  }
 }
 
 onMounted(async () => {
