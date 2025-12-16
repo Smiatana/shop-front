@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import type { Category } from '@/types/category'
-import type { Product } from '@/types/product'
+import type { ProductCardDto } from '@/types/product'
 import { authFetch } from '@/utils/authFetch'
 import AdminProductCard from './AdminProductCard.vue'
 import AdminProductForm from './AdminProductForm.vue'
@@ -16,7 +16,7 @@ const emit = defineEmits<{
   categoryUpdated: []
 }>()
 
-const products = ref<Product[]>([])
+const products = ref<ProductCardDto[]>([])
 const loading = ref(false)
 
 async function loadProducts() {

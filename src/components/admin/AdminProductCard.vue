@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import type { Product } from '@/types/product'
+import type { ProductCardDto } from '@/types/product'
 import type { Category } from '@/types/category'
 import { authFetch } from '@/utils/authFetch'
 import { imageUrl } from '@/utils/imageUrl'
 
 const props = defineProps<{
-  product: Product
+  product: ProductCardDto
   categoryId?: number | null
   categories?: Category[]
   showCategorySelector?: boolean
@@ -47,6 +47,9 @@ async function moveProduct() {
     <div class="image">
       <img v-if="product.images?.length" :src="imageUrl(product.images[0].url)" class="thumb" />
       <div v-else class="thumb placeholder">No image</div>
+      <div v-if="product.discountPercentage > 0" class="discount-badge">
+        -{{ product.discountPercentage }}%
+      </div>
     </div>
 
     <div class="info">
@@ -55,7 +58,14 @@ async function moveProduct() {
         <span v-if="product.brand" class="brand">({{ product.brand }})</span>
       </div>
 
-      <div class="meta">{{ product.price }} BYN · stock: {{ product.stockQuantity }}</div>
+      <div class="meta">
+        <template v-if="product.discountPercentage > 0">
+          <span class="original-price">{{ product.price }} BYN</span>
+          <span class="discounted-price">{{ product.discountedPrice }} BYN</span>
+        </template>
+        <template v-else> {{ product.price }} BYN </template>
+        · stock: {{ product.stockQuantity }}
+      </div>
 
       <div class="cat" v-if="!showCategorySelector">Category: {{ product.categoryId }}</div>
 
@@ -65,7 +75,6 @@ async function moveProduct() {
             {{ c.name }}
           </option>
         </select>
-
         <button @click="moveProduct" class="move-btn">Move</button>
       </div>
     </div>
@@ -74,14 +83,12 @@ async function moveProduct() {
       <button class="edit-btn" @click="$router.push(`/admin/products/${product.id}/edit`)">
         Edit
       </button>
-
       <button
         class="discount-btn"
         @click="$router.push(`/admin/discounts/create?productId=${product.id}`)"
       >
         Add Discount
       </button>
-
       <button class="delete-btn" @click="deleteProduct">Delete</button>
     </div>
   </div>
@@ -95,6 +102,11 @@ async function moveProduct() {
   padding: 10px;
   background: var(--card-bg);
   border-radius: 6px;
+  position: relative;
+}
+
+.image {
+  position: relative;
 }
 
 .image .thumb {
@@ -111,6 +123,18 @@ async function moveProduct() {
   background: #222;
   color: #777;
   font-size: 10px;
+}
+
+.discount-badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: #f59e0b;
+  color: white;
+  font-size: 10px;
+  font-weight: bold;
+  padding: 2px 4px;
+  border-radius: 4px;
 }
 
 .info {
@@ -130,6 +154,20 @@ async function moveProduct() {
 .meta {
   font-size: 12px;
   color: var(--subtext);
+}
+
+.original-price {
+  text-decoration: line-through;
+  margin-right: 6px;
+  color: #999;
+}
+
+.discounted-price {
+  font-weight: bold;
+  color: #10b981;
+}
+.discounted-price {
+  color: #548800;
 }
 
 .actions {

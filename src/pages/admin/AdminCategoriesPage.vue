@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import type { Category } from '@/types/category'
-import type { Product } from '@/types/product'
+import type { ProductCardDto } from '@/types/product'
 import { authFetch } from '@/utils/authFetch'
 import AdminCategoryBlock from '@/components/admin/AdminCategoryBlock.vue'
 import { useAuthStore } from '@/stores/auth'
@@ -37,7 +37,7 @@ async function searchProducts() {
 
   const res = await authFetch(`/api/products/search?query=${encodeURIComponent(q)}`)
   if (!res.ok) return
-  const products: Product[] = await res.json()
+  const products: ProductCardDto[] = await res.json()
 
   const categoriesWithMatches = Array.from(new Set(products.map((p) => p.categoryId)))
   expandedCategoryIds.value = categoriesWithMatches

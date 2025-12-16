@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import type { Product } from '@/types/product'
+import type { ProductCardDto } from '@/types/product'
 import type { Category } from '@/types/category'
 import { authFetch } from '@/utils/authFetch'
 import AdminProductCard from '@/components/admin/AdminProductCard.vue'
 
-const products = ref<Product[]>([])
+const products = ref<ProductCardDto[]>([])
 const categories = ref<Category[]>([])
 const searchQuery = ref('')
 const selectedCategoryId = ref<number | null>(null)

@@ -148,7 +148,12 @@ onMounted(loadCategories)
       <input v-model="form.brand" placeholder="Brand" />
       <input v-model="form.price" type="number" step="0.01" placeholder="Price" />
       <input v-model="form.stockQuantity" type="number" placeholder="Stock" />
-      <input v-model="form.description" placeholder="Description" />
+      <textarea
+        v-model="form.description"
+        placeholder="Description"
+        rows="30"
+        class="description"
+      />
       <select v-model="form.categoryId">
         <option v-for="c in categories" :key="c.id" :value="c.id">
           {{ c.name }}
@@ -239,7 +244,8 @@ onMounted(loadCategories)
 }
 
 .form input,
-select {
+select,
+textarea {
   background-color: var(--bg);
   color: var(--text);
   border: 1px solid var(--subtext);
