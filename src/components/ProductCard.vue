@@ -26,7 +26,7 @@ const auth = useAuthStore()
     <div class="info">
       <h3 class="name">{{ name }}</h3>
       <div class="price">
-        <template v-if="discountedPrice">
+        <template v-if="discountedPrice != price">
           <span class="old">{{ price }} BYN</span>
           <span class="new">{{ discountedPrice }} BYN</span>
         </template>

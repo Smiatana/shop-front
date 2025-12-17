@@ -11,9 +11,16 @@ import AdminParser from '@/pages/admin/AdminParser.vue'
 import AdminDiscountsPage from '@/pages/admin/AdminDiscountsPage.vue'
 import DiscountCreatePage from '@/pages/admin/DiscountCreatePage.vue'
 import AdminUsersPage from '@/pages/admin/AdminUsersPage.vue'
+import ProductsPage from '@/pages/ProductsPage.vue'
+import CategoryEditPage from '@/pages/admin/CategoryEditPage.vue'
 
 const routes: RouteRecordRaw[] = [
   { path: '/', name: 'home', component: HomePage },
+  {
+    path: '/products',
+    name: 'products',
+    component: ProductsPage,
+  },
   { path: '/signin', name: 'signin', component: SignInPage },
   {
     path: '/profile',
@@ -27,6 +34,7 @@ const routes: RouteRecordRaw[] = [
     meta: { requiresAdmin: true },
     children: [
       { path: 'categories', component: AdminCategoriesPage },
+      { path: 'categories/:id/edit', component: CategoryEditPage },
       { path: 'products', component: AdminProductsPage },
       { path: 'parsing', component: AdminParser },
       {

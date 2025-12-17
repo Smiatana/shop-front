@@ -5,6 +5,7 @@ import type { ProductCardDto } from '@/types/product'
 import { authFetch } from '@/utils/authFetch'
 import AdminProductCard from './AdminProductCard.vue'
 import AdminProductForm from './AdminProductForm.vue'
+import { imageUrl } from '@/utils/imageUrl'
 
 const props = defineProps<{
   category: Category
@@ -70,16 +71,28 @@ async function onProductMoved() {
   <section class="block">
     <header class="header">
       <div class="header-main" @click="emit('toggle')">
-        <span class="chevron">
-          {{ expanded ? '▾' : '▸' }}
-        </span>
+        <span class="chevron">{{ expanded ? '▾' : '▸' }}</span>
+
+        <div
+          class="thumb"
+          :style="
+            category.image ? { backgroundImage: `url(${imageUrl(category.image)})` } : undefined
+          "
+        />
+
         <div>
           <div class="name">{{ category.name }}</div>
           <div class="desc">{{ category.description }}</div>
         </div>
       </div>
 
-      <button class="danger" @click.stop="showDeleteConfirm = true">Delete</button>
+      <div class="actions">
+        <router-link :to="`/admin/categories/${category.id}/edit`" class="edit" @click.stop>
+          Edit
+        </router-link>
+
+        <button class="danger" @click.stop="showDeleteConfirm = true">Delete</button>
+      </div>
     </header>
 
     <div v-if="expanded" class="body">
@@ -231,5 +244,28 @@ async function onProductMoved() {
   color: #fff;
   border: none;
   cursor: pointer;
+}
+.thumb {
+  width: 42px;
+  height: 42px;
+  border-radius: 6px;
+  background: var(--bg);
+  background-size: cover;
+  background-position: center;
+  flex-shrink: 0;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+}
+
+.edit {
+  padding: 6px 10px;
+  border-radius: 4px;
+  background: var(--accent);
+  color: #000;
+  font-size: 13px;
+  text-decoration: none;
 }
 </style>

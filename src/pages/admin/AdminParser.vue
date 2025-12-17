@@ -109,7 +109,7 @@ onMounted(loadCategories)
 
 <template>
   <div class="parser-page">
-    <h1>📦 Product Scraper</h1>
+    <h1>Product Scraper 🍻</h1>
 
     <div class="scrape-card">
       <div class="form-grid">
@@ -185,7 +185,6 @@ onMounted(loadCategories)
 </template>
 
 <style scoped>
-/* --- LAYOUT --- */
 .parser-page {
   display: flex;
   flex-direction: column;
@@ -197,14 +196,12 @@ onMounted(loadCategories)
   flex: 1 0 auto;
 }
 
-/* Headings */
 h1 {
   font-size: 28px;
   margin-bottom: 12px;
   color: var(--text);
 }
 
-/* --- SCRAPER CARD --- */
 .scrape-card {
   background: var(--card-bg);
   padding: 20px;
@@ -277,7 +274,6 @@ select {
   color: #ef4444;
 }
 
-/* --- PRODUCTS GRID --- */
 .results {
   display: flex;
   flex-direction: column;
@@ -346,9 +342,8 @@ select {
   font-weight: bold;
 }
 
-/* --- FOOTER SPACING --- */
 .parser-page {
-  padding-bottom: 80px; /* ensure footer doesn’t overlap content */
+  padding-bottom: 80px;
 }
 
 .toggle-details-btn {

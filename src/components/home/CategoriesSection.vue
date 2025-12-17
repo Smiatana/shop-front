@@ -1,34 +1,51 @@
+<script setup lang="ts">
+import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import { authFetch } from '@/utils/authFetch'
+import { imageUrl } from '@/utils/imageUrl'
+import type { Category } from '@/types/category'
+
+const categories = ref<Category[]>([])
+const router = useRouter()
+
+async function loadCategories() {
+  const res = await authFetch('/api/categories')
+  if (res.ok) categories.value = await res.json()
+}
+
+function goToCategory(category: Category) {
+  router.push({
+    name: 'products',
+    query: { categoryId: category.id },
+  })
+}
+
+onMounted(loadCategories)
+</script>
+
 <template>
   <section class="categories">
     <h2>Categories</h2>
 
     <div class="category-grid">
-      <div class="category-card">Phones</div>
-      <div class="category-card">Laptops</div>
-      <div class="category-card">Tablets</div>
-      <div class="category-card">Accessories</div>
+      <div v-for="c in categories" :key="c.id" class="category-card" @click="goToCategory(c)">
+        <div
+          class="image"
+          :style="c.image ? { backgroundImage: `url(${imageUrl(c.image)})` } : undefined"
+        />
+        <span>{{ c.name }}</span>
+      </div>
     </div>
   </section>
 </template>
 
 <style scoped>
-.categories {
-  padding: 40px;
-}
-
-.category-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
-}
-
 .category-card {
-  background: var(--card-bg);
-  padding: 40px;
-  border-radius: 12px;
-  text-align: center;
-  font-size: 20px;
   cursor: pointer;
+  background: var(--card-bg);
+  border-radius: 14px;
+  overflow: hidden;
+  text-align: center;
   transition: transform 0.2s;
 }
 
@@ -36,20 +53,15 @@
   transform: translateY(-4px);
 }
 
-@media (max-width: 900px) {
-  .category-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
+.image {
+  height: 140px;
+  background-size: cover;
+  background-position: center;
 }
 
-@media (max-width: 600px) {
-  .category-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .category-card {
-    padding: 28px;
-    font-size: 18px;
-  }
+span {
+  display: block;
+  padding: 12px;
+  font-weight: 600;
 }
 </style>
