@@ -15,12 +15,13 @@ const auth = useAuthStore()
 </script>
 
 <template>
-  <div class="product-card">
-    <div
-      class="product-img"
-      :style="image ? { backgroundImage: `url(${imageUrl(image)})` } : undefined"
-    >
-      <span v-if="discountPercentage" class="discount-badge">-{{ discountPercentage }}%</span>
+  <div class="product-card" @click="$router.push(`/products/${id}`)">
+    <div class="product-img">
+      <img v-if="image" :src="imageUrl(image)" :alt="name" loading="lazy" />
+
+      <div v-else class="img-placeholder">No image</div>
+
+      <span v-if="discountPercentage" class="discount-badge"> -{{ discountPercentage }}% </span>
     </div>
 
     <div class="info">
@@ -36,7 +37,7 @@ const auth = useAuthStore()
       </div>
     </div>
 
-    <div class="actions">
+    <div class="actions" @click.stop>
       <template v-if="auth.isAdmin">
         <router-link :to="`/admin/products/${id}/edit`" class="edit">Edit</router-link>
         <button class="delete">Delete</button>
@@ -46,7 +47,7 @@ const auth = useAuthStore()
         <button class="add-compare">Compare</button>
       </template>
       <template v-else>
-        <router-link to="/login" class="login-required">Log in to buy</router-link>
+        <router-link to="/signin" class="login-required">Sign in to buy</router-link>
       </template>
     </div>
   </div>
@@ -73,9 +74,21 @@ const auth = useAuthStore()
 .product-img {
   position: relative;
   height: 200px;
-  background: #333;
-  background-size: cover;
-  background-position: center;
+  background: color-mix(in srgb, var(--bg) 90%, var(--text) 5%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.product-img img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.img-placeholder {
+  font-size: 14px;
+  color: var(--subtext);
 }
 
 .discount-badge {

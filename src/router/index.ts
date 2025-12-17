@@ -13,6 +13,7 @@ import DiscountCreatePage from '@/pages/admin/DiscountCreatePage.vue'
 import AdminUsersPage from '@/pages/admin/AdminUsersPage.vue'
 import ProductsPage from '@/pages/ProductsPage.vue'
 import CategoryEditPage from '@/pages/admin/CategoryEditPage.vue'
+import ProductDetailsPage from '@/pages/ProductDetailsPage.vue'
 
 const routes: RouteRecordRaw[] = [
   { path: '/', name: 'home', component: HomePage },
@@ -20,6 +21,11 @@ const routes: RouteRecordRaw[] = [
     path: '/products',
     name: 'products',
     component: ProductsPage,
+  },
+  {
+    path: '/products/:id',
+    name: 'product-details',
+    component: ProductDetailsPage,
   },
   { path: '/signin', name: 'signin', component: SignInPage },
   {
