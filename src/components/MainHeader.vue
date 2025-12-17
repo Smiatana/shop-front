@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { Icon } from '@iconify/vue'
 import LogoLink from '@/components/LogoLink.vue'
 import { useAuthStore } from '@/stores/auth'
@@ -10,6 +11,20 @@ defineProps<{ theme: string }>()
 defineEmits(['toggle-theme'])
 
 const mobileOpen = ref(false)
+
+const searchQuery = ref('')
+const router = useRouter()
+
+function submitSearch() {
+  if (!searchQuery.value.trim()) return
+
+  router.push({
+    name: 'products',
+    query: { q: searchQuery.value.trim() },
+  })
+
+  searchQuery.value = ''
+}
 </script>
 
 <template>
@@ -19,7 +34,16 @@ const mobileOpen = ref(false)
     </div>
 
     <div class="center">
-      <input class="search" type="text" placeholder="Search products..." />
+      <input
+        v-model="searchQuery"
+        class="search"
+        type="text"
+        placeholder="Search products..."
+        @keyup.enter="submitSearch"
+      />
+      <button class="search-btn" @click="submitSearch">
+        <Icon icon="mdi:magnify" width="20" height="20" />
+      </button>
     </div>
 
     <div class="right">
@@ -116,6 +140,13 @@ const mobileOpen = ref(false)
 
 .search:focus {
   border-color: var(--accent);
+}
+
+.search-btn {
+  background: none;
+  border: none;
+  color: var(--subtext);
+  cursor: pointer;
 }
 
 .right {

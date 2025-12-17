@@ -40,28 +40,75 @@ onMounted(loadCategories)
 </template>
 
 <style scoped>
+.categories {
+  padding: 32px 16px;
+}
+
+.categories h2 {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: var(--text);
+}
+
+.category-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 16px;
+}
+
 .category-card {
   cursor: pointer;
   background: var(--card-bg);
-  border-radius: 14px;
+  border-radius: 16px;
   overflow: hidden;
-  text-align: center;
-  transition: transform 0.2s;
+  display: flex;
+  flex-direction: column;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+  border: 1px solid color-mix(in srgb, var(--text) 8%, transparent);
 }
 
 .category-card:hover {
   transform: translateY(-4px);
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.15);
 }
 
 .image {
-  height: 140px;
+  width: 100%;
+  aspect-ratio: 1 / 1;
   background-size: cover;
   background-position: center;
+  background-color: color-mix(in srgb, var(--bg) 85%, var(--text) 5%);
 }
 
-span {
-  display: block;
-  padding: 12px;
+.category-card span {
+  padding: 12px 10px;
   font-weight: 600;
+  font-size: 14px;
+  text-align: center;
+  color: var(--text);
+  line-height: 1.2;
+}
+
+@media (min-width: 640px) {
+  .category-grid {
+    gap: 20px;
+  }
+
+  .category-card span {
+    font-size: 15px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .category-grid {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  }
+
+  .category-card span {
+    font-size: 16px;
+  }
 }
 </style>

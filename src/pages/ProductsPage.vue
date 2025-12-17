@@ -3,6 +3,7 @@ import { ref, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { authFetch } from '@/utils/authFetch'
 import ProductCard from '@/components/ProductCard.vue'
+import CategoryNav from '@/components/products/CategoryNav.vue'
 import type { ProductCardDto } from '@/types/product'
 
 const route = useRoute()
@@ -15,15 +16,21 @@ async function loadProducts() {
     params.append('categoryId', String(route.query.categoryId))
   }
 
+  if (route.query.q) {
+    params.append('query', String(route.query.q))
+  }
+
   const res = await authFetch(`/api/products/search?${params}`)
   if (res.ok) products.value = await res.json()
 }
 
 onMounted(loadProducts)
-watch(() => route.query.categoryId, loadProducts)
+watch(() => route.query, loadProducts)
 </script>
 
 <template>
+  <CategoryNav />
+
   <div class="grid">
     <ProductCard
       v-for="p in products"
