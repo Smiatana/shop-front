@@ -16,6 +16,8 @@ import CategoryEditPage from '@/pages/admin/CategoryEditPage.vue'
 import ProductDetailsPage from '@/pages/ProductDetailsPage.vue'
 import CartPage from '@/pages/CartPage.vue'
 import OrdersPage from '@/pages/OrdersPage.vue'
+import ComparisonCategoryPage from '@/pages/ComparisonCategoryPage.vue'
+import ComparisonsPage from '@/pages/ComparisonsPage.vue'
 
 const routes: RouteRecordRaw[] = [
   { path: '/', name: 'home', component: HomePage },
@@ -46,6 +48,16 @@ const routes: RouteRecordRaw[] = [
     path: '/orders',
     name: 'orders',
     component: OrdersPage,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/comparisons',
+    component: ComparisonsPage,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/comparisons/:categoryId',
+    component: ComparisonCategoryPage,
     meta: { requiresAuth: true },
   },
   {

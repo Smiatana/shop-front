@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ref } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { authFetch } from '@/utils/authFetch'
 import { imageUrl } from '@/utils/imageUrl'
@@ -13,10 +14,23 @@ const props = defineProps<{
 }>()
 
 const auth = useAuthStore()
+const comparing = ref(false)
+
 async function addToCart() {
   await authFetch(`/api/cart/items?productId=${props.id}&quantity=1`, {
     method: 'POST',
   })
+}
+
+async function addToCompare() {
+  if (comparing.value) return
+  comparing.value = true
+
+  await authFetch(`/api/comparisons/add/${props.id}`, {
+    method: 'POST',
+  })
+
+  comparing.value = false
 }
 </script>
 
@@ -50,7 +64,9 @@ async function addToCart() {
       </template>
       <template v-else-if="auth.isAuthenticated">
         <button class="add-cart" @click="addToCart">Add to Cart</button>
-        <button class="add-compare">Compare</button>
+        <button class="add-compare" :disabled="comparing" @click.stop="addToCompare">
+          {{ comparing ? 'Added' : 'Compare' }}
+        </button>
       </template>
       <template v-else>
         <router-link to="/signin" class="login-required">Sign in to buy</router-link>
@@ -148,6 +164,11 @@ async function addToCart() {
   gap: 8px;
   padding: 12px;
   flex-wrap: wrap;
+}
+
+.add-compare:disabled {
+  opacity: 0.6;
+  cursor: default;
 }
 
 .actions button,

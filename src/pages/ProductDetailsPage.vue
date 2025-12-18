@@ -6,12 +6,14 @@ import { authFetch } from '@/utils/authFetch'
 import { imageUrl } from '@/utils/imageUrl'
 import ProductReviews from '@/components/products/ProductReviews.vue'
 import type { Product } from '@/types/product'
+
 const route = useRoute()
 const router = useRouter()
 const auth = useAuthStore()
 
 const product = ref<Product | null>(null)
 const selectedImage = ref<string | null>(null)
+const comparing = ref(false)
 
 const activeTab = ref<'description' | 'specs' | 'reviews'>('description')
 
@@ -30,6 +32,20 @@ async function addToCart() {
   if (!product.value) return
 
   await authFetch(`/api/cart/items?productId=${product.value.id}&quantity=1`, { method: 'POST' })
+}
+
+async function addToCompare() {
+  if (!product.value || comparing.value) return
+
+  comparing.value = true
+
+  await authFetch(`/api/comparisons/add/${product.value.id}`, {
+    method: 'POST',
+  })
+
+  comparing.value = false
+
+  router.push(`/comparisons/${product.value.categoryId}`)
 }
 
 onMounted(loadProduct)
@@ -74,7 +90,9 @@ onMounted(loadProduct)
 
           <template v-else-if="auth.isAuthenticated">
             <button class="add-cart" @click="addToCart">Add to Cart</button>
-            <button class="add-compare">Compare</button>
+            <button class="add-compare" :disabled="comparing" @click="addToCompare">
+              {{ comparing ? 'Added to comparison' : 'Compare' }}
+            </button>
           </template>
 
           <template v-else>
@@ -223,6 +241,10 @@ onMounted(loadProduct)
   background: transparent;
   border: 1px solid var(--accent);
   color: var(--accent);
+}
+.add-compare:disabled {
+  opacity: 0.6;
+  cursor: default;
 }
 
 .section {
