@@ -46,6 +46,7 @@ async function removeItem(itemId: number) {
 }
 
 async function createOrder() {
+  if (!cart.value || !cart.value.items.length) return
   const body = {
     items: cart.value.items.map((i: any) => ({
       productId: i.productId,
@@ -53,15 +54,26 @@ async function createOrder() {
     })),
   }
 
-  const res = await authFetch('/api/orders', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body),
-  })
+  try {
+    const res = await authFetch('/api/orders', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    })
 
-  if (res.ok) {
+    if (!res.ok) {
+      const errText = await res.text()
+      console.error('Order creation failed:', errText)
+      error.value = 'Failed to place order.'
+      return
+    }
+
     await authFetch('/api/cart/clear', { method: 'DELETE' })
+
     router.push('/orders')
+  } catch (err) {
+    console.error(err)
+    error.value = 'Something went wrong. Please try again.'
   }
 }
 </script>
