@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import ProductCard from '../ProductCard.vue'
+import ProductCard from '../products/ProductCard.vue'
 import { authFetch } from '@/utils/authFetch'
 
 interface DiscountedProduct {

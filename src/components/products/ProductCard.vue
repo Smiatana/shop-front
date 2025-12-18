@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { useAuthStore } from '@/stores/auth'
+import { authFetch } from '@/utils/authFetch'
 import { imageUrl } from '@/utils/imageUrl'
 
-defineProps<{
+const props = defineProps<{
   id: number
   name: string
   price: number
@@ -12,6 +13,11 @@ defineProps<{
 }>()
 
 const auth = useAuthStore()
+async function addToCart() {
+  await authFetch(`/api/cart/items?productId=${props.id}&quantity=1`, {
+    method: 'POST',
+  })
+}
 </script>
 
 <template>
@@ -43,7 +49,7 @@ const auth = useAuthStore()
         <button class="delete">Delete</button>
       </template>
       <template v-else-if="auth.isAuthenticated">
-        <button class="add-cart">Add to Cart</button>
+        <button class="add-cart" @click="addToCart">Add to Cart</button>
         <button class="add-compare">Compare</button>
       </template>
       <template v-else>

@@ -237,6 +237,12 @@ onMounted(load)
   width: 20px;
   height: 20px;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  line-height: 1;
+  padding: 0;
 }
 .review {
   display: flex;

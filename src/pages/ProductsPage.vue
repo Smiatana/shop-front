@@ -2,7 +2,7 @@
 import { ref, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { authFetch } from '@/utils/authFetch'
-import ProductCard from '@/components/ProductCard.vue'
+import ProductCard from '@/components/products/ProductCard.vue'
 import CategoryNav from '@/components/products/CategoryNav.vue'
 import type { ProductCardDto } from '@/types/product'
 

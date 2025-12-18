@@ -14,6 +14,7 @@ import AdminUsersPage from '@/pages/admin/AdminUsersPage.vue'
 import ProductsPage from '@/pages/ProductsPage.vue'
 import CategoryEditPage from '@/pages/admin/CategoryEditPage.vue'
 import ProductDetailsPage from '@/pages/ProductDetailsPage.vue'
+import CartPage from '@/pages/CartPage.vue'
 
 const routes: RouteRecordRaw[] = [
   { path: '/', name: 'home', component: HomePage },
@@ -32,6 +33,12 @@ const routes: RouteRecordRaw[] = [
     path: '/profile',
     name: 'profile',
     component: UserProfilePage,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/cart',
+    name: 'cart',
+    component: CartPage,
     meta: { requiresAuth: true },
   },
   {

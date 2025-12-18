@@ -26,6 +26,12 @@ async function loadProduct() {
   selectedImage.value = product.value.images?.[0]?.url ?? null
 }
 
+async function addToCart() {
+  if (!product.value) return
+
+  await authFetch(`/api/cart/items?productId=${product.value.id}&quantity=1`, { method: 'POST' })
+}
+
 onMounted(loadProduct)
 </script>
 
@@ -67,7 +73,7 @@ onMounted(loadProduct)
           </template>
 
           <template v-else-if="auth.isAuthenticated">
-            <button class="add-cart">Add to Cart</button>
+            <button class="add-cart" @click="addToCart">Add to Cart</button>
             <button class="add-compare">Compare</button>
           </template>
 
