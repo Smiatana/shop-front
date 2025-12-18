@@ -4,13 +4,16 @@ import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { authFetch } from '@/utils/authFetch'
 import { imageUrl } from '@/utils/imageUrl'
-
+import ProductReviews from '@/components/products/ProductReviews.vue'
+import type { Product } from '@/types/product'
 const route = useRoute()
 const router = useRouter()
 const auth = useAuthStore()
 
-const product = ref<any | null>(null)
+const product = ref<Product | null>(null)
 const selectedImage = ref<string | null>(null)
+
+const activeTab = ref<'description' | 'specs' | 'reviews'>('description')
 
 async function loadProduct() {
   const res = await authFetch(`/api/products/${route.params.id}`)
@@ -74,23 +77,35 @@ onMounted(loadProduct)
         </div>
       </div>
     </div>
+    <div class="tabs">
+      <button :class="{ active: activeTab === 'description' }" @click="activeTab = 'description'">
+        Description
+      </button>
 
-    <!-- 🔹 DESCRIPTION -->
-    <section class="section">
+      <button :class="{ active: activeTab === 'specs' }" @click="activeTab = 'specs'">Specs</button>
+
+      <button :class="{ active: activeTab === 'reviews' }" @click="activeTab = 'reviews'">
+        Reviews
+      </button>
+    </div>
+
+    <section v-if="activeTab === 'description'" class="section">
       <h2>Description</h2>
       <p>{{ product.description }}</p>
     </section>
 
-    <!-- 🔹 SPECS -->
-    <section v-if="product.specs" class="section">
+    <section v-if="activeTab === 'specs'" class="section">
       <h2>Specifications</h2>
-
       <table class="specs">
         <tr v-for="(value, key) in product.specs" :key="key">
           <th>{{ key }}</th>
           <td>{{ value }}</td>
         </tr>
       </table>
+    </section>
+
+    <section v-if="activeTab === 'reviews'" class="section">
+      <ProductReviews :productId="product.id" />
     </section>
   </div>
 </template>
@@ -104,14 +119,16 @@ onMounted(loadProduct)
 
 .top {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(250px, 40%) 1fr;
   gap: 32px;
+  align-items: start;
 }
 
 .gallery {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  max-width: 100%;
 }
 
 .main-image {
@@ -121,6 +138,7 @@ onMounted(loadProduct)
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
 }
 
 .main-image img {
@@ -132,6 +150,7 @@ onMounted(loadProduct)
 .thumbs {
   display: flex;
   gap: 10px;
+  flex-wrap: wrap;
 }
 
 .thumbs img {
@@ -224,6 +243,38 @@ onMounted(loadProduct)
 .specs th {
   width: 30%;
   color: var(--subtext);
+}
+
+.tabs {
+  display: flex;
+  gap: 12px;
+  margin: 32px 0;
+  border-bottom: 1px solid var(--card-bg);
+}
+
+.tabs button {
+  background: none;
+  border: none;
+  padding: 10px 4px;
+  font-size: 15px;
+  cursor: pointer;
+  color: var(--subtext);
+  position: relative;
+}
+
+.tabs button.active {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.tabs button.active::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  width: 100%;
+  height: 2px;
+  background: var(--accent);
 }
 
 @media (max-width: 900px) {

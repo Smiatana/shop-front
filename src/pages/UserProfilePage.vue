@@ -2,36 +2,78 @@
 import { ref, onMounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { useRouter } from 'vue-router'
-import type { UserProfile } from '@/types/user'
+import { authFetch } from '@/utils/authFetch'
+import { imageUrl } from '@/utils/imageUrl'
 
 const auth = useAuthStore()
 const router = useRouter()
 
-const user = ref<UserProfile | null>(null)
+const user = ref<any | null>(null)
+const reviews = ref<any[]>([])
+
 const loading = ref(true)
+const saving = ref(false)
 const error = ref('')
 
-const API_URL = import.meta.env.VITE_API_URL
+const name = ref('')
+const avatarFile = ref<File | null>(null)
+const avatarPreview = ref<string | null>(null)
 
-onMounted(async () => {
-  console.log('TOKEN:', auth.token)
+async function loadProfile() {
+  const res = await authFetch('/api/users/me')
+  if (!res.ok) {
+    error.value = 'Failed to load profile'
+    return
+  }
+
+  user.value = await res.json()
+  name.value = user.value.name
+
+  const avatar = user.value.images?.find((i: any) => i.position === 0)
+  avatarPreview.value = avatar ? imageUrl(avatar.url) : null
+}
+
+async function loadReviews() {
+  const res = await authFetch('/api/reviews/me')
+  if (res.ok) {
+    reviews.value = await res.json()
+  }
+}
+
+function onAvatarChange(e: Event) {
+  const file = (e.target as HTMLInputElement).files?.[0]
+  if (!file) return
+
+  avatarFile.value = file
+  avatarPreview.value = URL.createObjectURL(file)
+}
+
+async function saveProfile() {
+  saving.value = true
+  error.value = ''
+
   try {
-    const res = await fetch(`${API_URL}/api/users/me`, {
-      headers: {
-        Authorization: `Bearer ${auth.token}`,
-      },
+    const form = new FormData()
+    form.append('name', name.value)
+    if (avatarFile.value) {
+      form.append('avatar', avatarFile.value)
+    }
+
+    const res = await authFetch('/api/users/me', {
+      method: 'PUT',
+      body: form,
     })
 
     if (!res.ok) {
-      error.value = 'Failed to load profile'
+      error.value = 'Failed to save profile'
       return
     }
 
-    user.value = await res.json()
+    await loadProfile()
   } finally {
-    loading.value = false
+    saving.value = false
   }
-})
+}
 
 function goTo(path: string) {
   router.push(path)
@@ -41,6 +83,15 @@ function logout() {
   auth.logout()
   router.push('/signin')
 }
+
+onMounted(async () => {
+  try {
+    await loadProfile()
+    await loadReviews()
+  } finally {
+    loading.value = false
+  }
+})
 </script>
 
 <template>
@@ -50,17 +101,47 @@ function logout() {
     <div v-if="loading" class="loading">Loading...</div>
     <div v-else-if="error" class="error">{{ error }}</div>
 
-    <div v-else class="profile-card">
-      <div class="info">
-        <h2>{{ user?.name }}</h2>
-        <p class="email">{{ user?.email }}</p>
+    <div v-else class="profile-grid">
+      <!-- 🔹 PROFILE CARD -->
+      <div class="profile-card">
+        <div class="avatar">
+          <img v-if="avatarPreview" :src="avatarPreview" alt="Profile picture" />
+          <div v-else class="placeholder">?</div>
+        </div>
+
+        <label class="upload">
+          Change photo
+          <input type="file" accept="image/*" @change="onAvatarChange" />
+        </label>
+
+        <input v-model="name" class="input" placeholder="Your name" />
+
+        <button class="save" :disabled="saving" @click="saveProfile">
+          {{ saving ? 'Saving...' : 'Save changes' }}
+        </button>
+
+        <div class="actions">
+          <button @click="goTo('/cart')">Your Cart</button>
+          <button @click="goTo('/orders')">Your Orders</button>
+          <button @click="goTo('/comparisons')">Comparisons</button>
+          <button class="logout" @click="logout">Sign Out</button>
+        </div>
       </div>
 
-      <div class="actions">
-        <button @click="goTo('/cart')">Your Cart</button>
-        <button @click="goTo('/orders')">Your Orders</button>
-        <button @click="goTo('/comparisons')">Comparisons</button>
-        <button class="logout" @click="logout">Sign Out</button>
+      <!-- 🔹 REVIEWS -->
+      <div class="reviews-card">
+        <h2>Your Reviews</h2>
+
+        <div v-if="!reviews.length" class="empty">You haven’t written any reviews yet.</div>
+
+        <div v-for="r in reviews" :key="r.id" class="review">
+          <div class="rating">⭐ {{ r.rating }}/5</div>
+          <h3>{{ r.title }}</h3>
+          <p>{{ r.body }}</p>
+          <div class="date">
+            {{ new Date(r.createdAt).toLocaleDateString() }}
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -68,74 +149,146 @@ function logout() {
 
 <style scoped>
 .profile-page {
-  max-width: 600px;
+  max-width: 1100px;
   margin: 40px auto;
   padding: 20px;
 }
 
 h1 {
   text-align: center;
-  margin-bottom: 30px;
+  margin-bottom: 32px;
 }
 
-.profile-card {
+.profile-grid {
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  gap: 32px;
+}
+
+.profile-card,
+.reviews-card {
   background: var(--card-bg);
-  padding: 30px;
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  padding: 28px;
+  border-radius: 16px;
 }
 
-.info {
+.avatar {
+  width: 120px;
+  height: 120px;
+  margin: 0 auto 12px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #222;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.placeholder {
+  font-size: 48px;
+  color: #777;
+}
+
+.upload {
+  display: block;
   text-align: center;
-  margin-bottom: 30px;
+  color: var(--accent);
+  cursor: pointer;
+  font-size: 14px;
+  margin-bottom: 16px;
 }
 
-.info h2 {
-  font-size: 26px;
-  margin-bottom: 6px;
+.upload input {
+  display: none;
 }
 
-.info .email {
-  opacity: 0.7;
-  font-size: 15px;
+.input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #333;
+  background: transparent;
+  color: inherit;
+  margin-bottom: 12px;
+}
+
+.save {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  background: var(--accent);
+  color: #fff;
+  font-weight: 500;
+  cursor: pointer;
+  margin-bottom: 20px;
 }
 
 .actions {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
 }
 
 .actions button {
-  padding: 12px;
-  border: none;
+  padding: 10px;
   border-radius: 8px;
-  background: var(--accent);
-  color: white;
-  font-size: 16px;
-  cursor: pointer;
-  transition:
-    background 0.2s,
-    transform 0.15s;
-}
-
-.actions button:hover {
+  border: none;
   background: var(--accent-dark);
-  transform: translateY(-2px);
+  color: white;
+  cursor: pointer;
 }
 
 .actions .logout {
   background: #ff4d4d;
 }
 
-.actions .logout:hover {
-  background: #e63d3d;
+.reviews-card h2 {
+  margin-bottom: 16px;
+}
+
+.review {
+  padding: 16px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  margin-bottom: 14px;
+}
+
+.review h3 {
+  margin: 6px 0;
+}
+
+.rating {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.date {
+  font-size: 12px;
+  opacity: 0.6;
+  margin-top: 6px;
+}
+
+.empty {
+  opacity: 0.6;
+  font-style: italic;
 }
 
 .loading,
 .error {
   text-align: center;
   margin-top: 20px;
-  opacity: 0.8;
+}
+
+@media (max-width: 900px) {
+  .profile-grid {
+    grid-template-columns: 1fr;
+  }
 }
 </style>
