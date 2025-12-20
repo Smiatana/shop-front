@@ -1,11 +1,26 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import type { OrderDto } from '@/types/orders'
 import OrderItemCard from './OrderItemCard.vue'
 
-const props = defineProps<{ order: OrderDto }>()
+const props = defineProps<{
+  order: OrderDto
+  admin?: boolean
+}>()
+
+const emit = defineEmits<{
+  (e: 'update-status', payload: { orderId: number; status: string }): void
+  (e: 'delete', orderId: number): void
+}>()
 
 const expanded = ref(false)
+const selectedStatus = ref(props.order.status)
+
+watch(
+  () => props.order.status,
+  (v) => (selectedStatus.value = v),
+)
+
 function toggle() {
   expanded.value = !expanded.value
 }
@@ -14,14 +29,27 @@ const statusClass = computed(() => {
   switch (props.order.status.toLowerCase()) {
     case 'pending':
       return 'pending'
-    case 'completed':
-      return 'completed'
+    case 'ready':
+      return 'ready'
     case 'cancelled':
       return 'cancelled'
     default:
       return ''
   }
 })
+
+function saveStatus() {
+  emit('update-status', {
+    orderId: props.order.id,
+    status: selectedStatus.value,
+  })
+}
+
+function deleteOrder() {
+  if (confirm(`Delete order #${props.order.id}?`)) {
+    emit('delete', props.order.id)
+  }
+}
 </script>
 
 <template>
@@ -31,18 +59,32 @@ const statusClass = computed(() => {
         <div class="order-id">Order #{{ order.id }}</div>
         <div class="date">{{ order.createdAt }}</div>
       </div>
+
       <div class="status-total">
         <div class="status">
-          Status: <span :class="statusClass">{{ order.status }}</span>
+          Status:
+          <span :class="statusClass">{{ order.status }}</span>
         </div>
         <div class="total">Total: {{ order.totalPrice }} BYN</div>
       </div>
+
       <div class="toggle-icon">{{ expanded ? '▲' : '▼' }}</div>
     </div>
 
     <transition name="fade">
       <div v-if="expanded" class="items">
         <OrderItemCard v-for="item in order.items" :key="item.id" :item="item" />
+
+        <!-- ADMIN CONTROLS -->
+        <div v-if="admin" class="admin-controls">
+          <select v-model="selectedStatus">
+            <option value="Pending">Pending</option>
+            <option value="Ready">Ready</option>
+          </select>
+
+          <button @click="saveStatus">Update status</button>
+          <button class="danger" @click="deleteOrder">Delete</button>
+        </div>
       </div>
     </transition>
   </div>
@@ -101,7 +143,7 @@ const statusClass = computed(() => {
 .status span.pending {
   color: #ffa500;
 }
-.status span.completed {
+.status span.ready {
   color: #4caf50;
 }
 .status span.cancelled {
@@ -131,5 +173,27 @@ const statusClass = computed(() => {
 .fade-leave-to {
   opacity: 0;
   transform: translateY(-5px);
+}
+.admin-controls {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+select {
+  padding: 6px;
+  border-radius: 6px;
+}
+
+button {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+}
+
+button.danger {
+  background: #f44336;
+  color: white;
 }
 </style>

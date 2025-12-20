@@ -20,6 +20,8 @@ function logout() {
       <RouterLink to="/admin/products">Products</RouterLink>
       <RouterLink to="/admin/discounts">Discounts</RouterLink>
       <RouterLink to="/admin/parsing">Parsing</RouterLink>
+      <RouterLink to="/admin/orders">Orders</RouterLink>
+      <RouterLink to="/admin/users">Users</RouterLink>
 
       <button class="logout" @click="logout">Log out</button>
     </aside>

@@ -18,6 +18,7 @@ import CartPage from '@/pages/CartPage.vue'
 import OrdersPage from '@/pages/OrdersPage.vue'
 import ComparisonCategoryPage from '@/pages/ComparisonCategoryPage.vue'
 import ComparisonsPage from '@/pages/ComparisonsPage.vue'
+import AdminOrdersPage from '@/pages/admin/AdminOrdersPage.vue'
 
 const routes: RouteRecordRaw[] = [
   { path: '/', name: 'home', component: HomePage },
@@ -76,6 +77,7 @@ const routes: RouteRecordRaw[] = [
       { path: 'discounts', component: AdminDiscountsPage },
       { path: 'discounts/create', component: DiscountCreatePage },
       { path: 'users', component: AdminUsersPage },
+      { path: 'orders', component: AdminOrdersPage },
     ],
   },
 ]
