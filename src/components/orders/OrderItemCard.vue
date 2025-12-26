@@ -33,10 +33,12 @@ defineProps<{
 
 <style scoped>
 .order-item-card {
+  border-radius: 10px;
   display: flex;
+  background: var(--card-bg);
   gap: 16px;
   padding: 12px;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--card-bg);
 }
 img {
   width: 80px;

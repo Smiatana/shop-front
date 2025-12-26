@@ -11,16 +11,18 @@ async function register() {
   error.value = ''
   success.value = ''
 
-  const params = new URLSearchParams({
-    email: email.value,
-    password: password.value,
-    name: name.value,
-  })
-
   const API_URL = import.meta.env.VITE_API_URL
 
-  const res = await fetch(`${API_URL}/api/auth/register?` + params.toString(), {
+  const res = await fetch(`${API_URL}/api/auth/register`, {
     method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      email: email.value,
+      password: password.value,
+      name: name.value,
+    }),
   })
 
   if (!res.ok) {

@@ -59,7 +59,7 @@ const routes: RouteRecordRaw[] = [
     meta: { requiresAuth: true },
   },
   {
-    path: '/comparisons/:categoryId',
+    path: '/comparisons/:name',
     component: ComparisonCategoryPage,
     meta: { requiresAuth: true },
   },

@@ -27,7 +27,8 @@ const loading = ref(true)
 async function loadComparison() {
   loading.value = true
 
-  const res = await authFetch(`/api/comparisons/category/${route.params.categoryId}`)
+  const name = route.params.name as string
+  const res = await authFetch(`/api/comparisons/${name}`)
 
   if (!res.ok) {
     router.push('/comparisons')

@@ -7,40 +7,6 @@ const images = ref<
   Array<{ id: number; url: string; altText: string | null; username: string; ownerType: string }>
 >([])
 
-const previousTheme = localStorage.getItem('theme') || 'light'
-
-function applyAdminTheme() {
-  const appEl = document.querySelector('.app') as HTMLElement
-  if (!appEl) return
-
-  appEl.style.setProperty('--bg', '#1a1a1a')
-  appEl.style.setProperty('--text', '#ff8c00')
-  appEl.style.setProperty('--subtext', '#ccc')
-  appEl.style.setProperty('--card-bg', '#2a2a2a')
-  appEl.style.setProperty('--accent', '#ff8c00')
-  appEl.style.setProperty('--accent-dark', '#cc7000')
-}
-function restoreTheme() {
-  const appEl = document.querySelector('.app') as HTMLElement
-  if (!appEl) return
-
-  if (previousTheme === 'light') {
-    appEl.style.setProperty('--bg', '#ffffff')
-    appEl.style.setProperty('--text', '#111111')
-    appEl.style.setProperty('--subtext', '#444444')
-    appEl.style.setProperty('--card-bg', '#f5f5f5')
-    appEl.style.setProperty('--accent', '#00c853')
-    appEl.style.setProperty('--accent-dark', '#009624')
-  } else {
-    appEl.style.setProperty('--bg', '#0d0d0d')
-    appEl.style.setProperty('--text', '#f0f0f0')
-    appEl.style.setProperty('--subtext', '#bbbbbb')
-    appEl.style.setProperty('--card-bg', '#1a1a1a')
-    appEl.style.setProperty('--accent', '#00e676')
-    appEl.style.setProperty('--accent-dark', '#00c853')
-  }
-}
-
 async function loadImages() {
   const res = await authFetch('/api/admin/images')
   images.value = await res.json()
@@ -51,14 +17,13 @@ async function removeImage(id: number) {
   await authFetch(`/api/admin/images/${id}`, { method: 'DELETE' })
   images.value = images.value.filter((i) => i.id !== id)
 }
-
 onMounted(() => {
-  applyAdminTheme()
+  document.querySelector('.app')?.classList.add('admin')
   loadImages()
 })
 
 onBeforeUnmount(() => {
-  restoreTheme()
+  document.querySelector('.app')?.classList.remove('admin')
 })
 </script>
 

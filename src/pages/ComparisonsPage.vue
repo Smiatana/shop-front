@@ -4,23 +4,24 @@ import { useRouter } from 'vue-router'
 import { authFetch } from '@/utils/authFetch'
 
 const router = useRouter()
-const categories = ref<number[]>([])
 const loading = ref(true)
 
+const categories = ref<string[]>([])
+
 async function loadComparisons() {
-  loading.value = true
-
-  const found: number[] = []
-
-  for (let categoryId = 1; categoryId <= 50; categoryId++) {
-    const res = await authFetch(`/api/comparisons/category/${categoryId}`)
+  try {
+    const res = await authFetch('/api/comparisons')
     if (res.ok) {
-      found.push(categoryId)
+      categories.value = await res.json()
+    } else {
+      categories.value = []
     }
+  } catch (err) {
+    categories.value = []
+    console.error(err)
+  } finally {
+    loading.value = false
   }
-
-  categories.value = found
-  loading.value = false
 }
 
 onMounted(loadComparisons)
@@ -35,8 +36,8 @@ onMounted(loadComparisons)
     <div v-else-if="!categories.length" class="empty">You have no products in comparison yet.</div>
 
     <ul v-else class="list">
-      <li v-for="id in categories" :key="id" @click="router.push(`/comparisons/${id}`)">
-        Category #{{ id }}
+      <li v-for="name in categories" :key="name" @click="router.push(`/comparisons/${name}`)">
+        {{ name }}
       </li>
     </ul>
   </div>

@@ -189,7 +189,6 @@ function submitSearch() {
 }
 
 .mobile-nav {
-  display: none;
   position: absolute;
   top: 100%;
   right: 0;
@@ -200,10 +199,10 @@ function submitSearch() {
   flex-direction: column;
   gap: 16px;
   border-bottom: 1px solid var(--card-bg);
+  z-index: 1000;
 }
 
 .mobile-nav a {
-  display: none;
   text-align: end;
   color: var(--text);
   text-decoration: none;

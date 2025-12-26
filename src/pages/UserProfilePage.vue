@@ -138,6 +138,18 @@ onMounted(async () => {
           <div class="rating">⭐ {{ r.rating }}/5</div>
           <h3>{{ r.title }}</h3>
           <p>{{ r.body }}</p>
+
+          <div class="product">
+            Review for:
+            <router-link :to="`/products/${r.productId}`" class="product-link">
+              {{ r.productName }}
+            </router-link>
+          </div>
+
+          <div v-if="r.images?.length" class="review-images">
+            <img v-for="img in r.images" :key="img" :src="imageUrl(img)" class="review-image" />
+          </div>
+
           <div class="date">
             {{ new Date(r.createdAt).toLocaleDateString() }}
           </div>
@@ -284,6 +296,35 @@ h1 {
 .error {
   text-align: center;
   margin-top: 20px;
+}
+
+.product {
+  font-size: 13px;
+  opacity: 0.75;
+  margin-bottom: 6px;
+}
+
+.product-link {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.product-link:hover {
+  text-decoration: underline;
+}
+
+.review-images {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.review-image {
+  width: 60px;
+  height: 60px;
+  border-radius: 8px;
+  object-fit: cover;
 }
 
 @media (max-width: 900px) {

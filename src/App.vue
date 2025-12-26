@@ -53,6 +53,15 @@ body {
   --accent-dark: #00c853;
 }
 
+.app.admin {
+  --bg: #1a1a1a;
+  --text: #ff8c00;
+  --subtext: #ccc;
+  --card-bg: #2a2a2a;
+  --accent: #ff8c00;
+  --accent-dark: #cc7000;
+}
+
 .app {
   display: flex;
   flex-direction: column;

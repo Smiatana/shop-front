@@ -106,7 +106,7 @@ function deleteOrder() {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #f9f9f9;
+  background: var(--card-bg);
   padding: 16px;
   cursor: pointer;
   font-weight: 500;
@@ -161,8 +161,8 @@ function deleteOrder() {
 
 .items {
   padding: 16px;
-  background: white;
-  border-top: 1px solid #eee;
+  background: var(--bg);
+  border-top: 1px solid var(--card-bg);
 }
 
 .fade-enter-active,
